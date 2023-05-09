@@ -1,4 +1,4 @@
-package uz.nt.mediumclone.entity;
+package uz.nt.mediumclone.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

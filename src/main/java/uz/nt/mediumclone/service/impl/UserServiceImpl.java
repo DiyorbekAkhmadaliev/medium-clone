@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.nt.mediumclone.dto.UserDto;
-import uz.nt.mediumclone.entity.UserEntity;
+import uz.nt.mediumclone.model.UserEntity;
 import uz.nt.mediumclone.repository.UserRepository;
 import uz.nt.mediumclone.service.mapper.UserMapper;
 
@@ -28,9 +28,13 @@ public class UserServiceImpl {
 
     public ResponseEntity<?> getUser(Integer id){
         Optional<UserEntity> userEntity = userRepository.findFirstById(id);
-//        if(userEntity.isPresent()) return ResponseEntity.of(u)
-        return null;
+        if(userEntity.isPresent()) return ResponseEntity.ok(userMapper.toDto(userEntity.get()));
+        return ResponseEntity.status(400).body("User is not found");
     }
+
+//    public ResponseEntity<?> patchUser(UserDto userDto){
+//
+//    }
 
 
 }

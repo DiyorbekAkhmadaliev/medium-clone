@@ -1,12 +1,12 @@
 package uz.nt.mediumclone.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity(name = "users")
+@Entity(name = "Users")
 @Getter
 @Setter
 public class UserEntity implements Serializable{

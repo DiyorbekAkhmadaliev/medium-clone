@@ -10,6 +10,6 @@ public interface UserService {
 
     ResponseEntity<?> updateUser(UserDto userDto);
 
-    ResponseEntity<?> deleteUser(UserDto userDto);
+    ResponseEntity<?> deleteUser(Integer id);
 }
 

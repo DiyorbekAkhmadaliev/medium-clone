@@ -1,14 +1,13 @@
 package uz.nt.mediumclone.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -25,8 +24,8 @@ public class Article {
     private String body;
     private String about;
     private Integer author_id;
-    @ManyToMany(targetEntity = Tag.class)
-    private Set<Tag> tags;
+    @ManyToMany(targetEntity = Tag.class, cascade = CascadeType.ALL)
+    private List<Tag> tags;
     private LocalDateTime publishDate;
     private LocalDateTime updatedAt;
     @OneToMany(targetEntity = Comments.class)

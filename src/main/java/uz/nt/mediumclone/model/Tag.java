@@ -1,14 +1,13 @@
 package uz.nt.mediumclone.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 
 @Entity
 @Getter
@@ -18,7 +17,7 @@ import javax.persistence.SequenceGenerator;
 public class Tag {
 
     @Id
-    @GeneratedValue(generator = "tagIdSeq")
+    @GeneratedValue(generator = "tag_id_seq")
     @SequenceGenerator(name = "tag_id_seq", sequenceName = "tag_id_seq", allocationSize = 1)
     private Integer id;
     private String name;

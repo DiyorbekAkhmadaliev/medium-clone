@@ -19,7 +19,6 @@ public class ArticleResources {
 
     @PostMapping
     public ResponseEntity<?> addArticle(@RequestBody ArticlesDto articlesDto){
-        System.out.println(articlesDto.getTitle());
         return articleServices.addArticle(articlesDto);
     }
 

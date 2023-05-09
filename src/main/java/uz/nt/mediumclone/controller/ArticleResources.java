@@ -1,6 +1,7 @@
 package uz.nt.mediumclone.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,13 +12,14 @@ import uz.nt.mediumclone.service.ArticleServices;
 
 @RestController
 @RequestMapping("article")
-@RequiredArgsConstructor
 public class ArticleResources {
 
-    private final ArticleServices articleServices;
+    @Autowired
+    private ArticleServices articleServices;
 
     @PostMapping
-    public ResponseEntity<ArticlesDto> addArticle(@RequestBody ArticlesDto articlesDto){
+    public ResponseEntity<?> addArticle(@RequestBody ArticlesDto articlesDto){
+        System.out.println(articlesDto.getTitle());
         return articleServices.addArticle(articlesDto);
     }
 

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.nt.mediumclone.dto.UserDto;
-import uz.nt.mediumclone.entity.UserEntity;
+import uz.nt.mediumclone.model.UserEntity;
 import uz.nt.mediumclone.repository.UserRepository;
 import uz.nt.mediumclone.service.mapper.UserMapper;
 

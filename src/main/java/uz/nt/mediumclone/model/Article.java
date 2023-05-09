@@ -9,6 +9,7 @@ import uz.nt.mediumclone.dto.TagDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -25,8 +26,10 @@ public class Article {
     private String body;
     private String about;
     private Integer author_id;
-    @ManyToMany
-    private List<Tag> tags;
+    @ManyToMany(targetEntity = Tag.class)
+    private Set<Tag> tags;
     private LocalDateTime publishDate;
     private LocalDateTime updatedAt;
+    @OneToMany(targetEntity = Comments.class)
+    private List<Comments> comments;
 }

@@ -1,12 +1,11 @@
 package uz.nt.mediumclone.model;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uz.nt.mediumclone.dto.TagDto;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +18,7 @@ import java.util.Set;
 public class Article {
 
     @Id
-    @GeneratedValue(generator = "articleIdSeq")
+    @GeneratedValue(generator = "article_id_seq")
     @SequenceGenerator(name = "article_id_seq", sequenceName = "article_id_seq", allocationSize = 1)
     private Integer id;
     private String title;

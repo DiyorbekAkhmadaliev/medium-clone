@@ -6,7 +6,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
-@Entity(name = "User")
+@Entity(name = "Users")
 @Getter
 @Setter
 public class UserEntity implements Serializable{

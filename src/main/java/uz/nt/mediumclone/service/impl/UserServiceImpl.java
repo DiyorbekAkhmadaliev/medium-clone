@@ -6,12 +6,13 @@ import org.springframework.stereotype.Service;
 import uz.nt.mediumclone.dto.UserDto;
 import uz.nt.mediumclone.model.UserEntity;
 import uz.nt.mediumclone.repository.UserRepository;
+import uz.nt.mediumclone.service.UserService;
 import uz.nt.mediumclone.service.mapper.UserMapper;
 
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -32,9 +33,31 @@ public class UserServiceImpl {
         return ResponseEntity.status(400).body("User is not found");
     }
 
-//    public ResponseEntity<?> patchUser(UserDto userDto){
-//
-//    }
+    public ResponseEntity<?> updateUser(UserDto userDto){
+        if(userDto.getId() == null)
+            return ResponseEntity.status(404).body("User id not found");
+        else{
+            UserEntity userEntity = new UserEntity();
+            userEntity.setId(userDto.getId());
+            if(userDto.getUsername() != null) userEntity.setUsername(userDto.getUsername());
+            if(userDto.getPassword() != null) userEntity.setPassword(userDto.getPassword());
+            if(userDto.getEmail() != null) userEntity.setEmail(userDto.getEmail());
+            if(userDto.getBio() != null) userEntity.setBio(userDto.getBio());
+            try{
+                return ResponseEntity.ok(userRepository.save(userEntity));
+            }catch (Exception e){
+                return ResponseEntity.status(400).body(e.getMessage());
+            }
+        }
+    }
+
+    public ResponseEntity<?> deleteUser(Integer id){
+        if (userRepository.existsById(id)){
+            userRepository.deleteById(id);
+            return ResponseEntity.ok().body("User id deleted");
+        }
+        return ResponseEntity.status(404).body("User is not found");
+    }
 
 
 }

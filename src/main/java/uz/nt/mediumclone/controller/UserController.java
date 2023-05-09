@@ -1,23 +1,37 @@
 package uz.nt.mediumclone.controller;
 
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.nt.mediumclone.dto.UserDto;
+import uz.nt.mediumclone.service.UserService;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
+    @Autowired
+    private UserService userService;
+
 
 
 
     @PostMapping("/add-user")
-    private ResponseEntity<?> addUser(@RequestBody UserDto userDto){
+    private ResponseEntity<?> addUser(@Valid @RequestBody UserDto userDto){
 
-        return null;
+        return userService.addUser(userDto);
+    }
+
+    @GetMapping({"/get-user/{id}"}) ResponseEntity<?> getUser(@PathVariable Integer id){
+        return userService.getUser(id);
+    }
+    @PatchMapping ResponseEntity<?> updateUser(@RequestBody UserDto userDto){
+        return userService.updateUser(userDto);
+    }
+
+    @DeleteMapping ResponseEntity<?> deleteUser(@RequestParam Integer id){
+        return userService.deleteUser(id);
     }
 
 

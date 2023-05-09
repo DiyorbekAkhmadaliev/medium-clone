@@ -12,8 +12,10 @@ import uz.nt.mediumclone.dto.UserDto;
 public class UserController {
 
 
+
+
     @PostMapping("/add-user")
-    private ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto){
+    private ResponseEntity<?> addUser(@RequestBody UserDto userDto){
 
         return null;
     }

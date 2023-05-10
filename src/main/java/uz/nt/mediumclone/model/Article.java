@@ -1,11 +1,11 @@
 package uz.nt.mediumclone.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,10 +24,17 @@ public class Article {
     private String body;
     private String about;
     private Integer author_id;
-    @ManyToMany(targetEntity = Tag.class, cascade = CascadeType.ALL)
-    private List<Tag> tags;
+    @ElementCollection
+    @CollectionTable(name = "article_tag", joinColumns = @JoinColumn(name = "article_id"))
+    @Column(name = "tag")
+    private List<String> tags;
+    @ManyToMany
+    @JoinTable(
+            name = "likes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "article_id")
+    )
+    private List<UserEntity> likes;
     private LocalDateTime publishDate;
     private LocalDateTime updatedAt;
-    @OneToMany(targetEntity = Comments.class)
-    private List<Comments> comments;
 }

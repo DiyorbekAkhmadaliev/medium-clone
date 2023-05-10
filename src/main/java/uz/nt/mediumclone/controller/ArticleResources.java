@@ -3,10 +3,7 @@ package uz.nt.mediumclone.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.nt.mediumclone.dto.ArticlesDto;
 import uz.nt.mediumclone.service.ArticleServices;
 
@@ -18,8 +15,28 @@ public class ArticleResources {
     private ArticleServices articleServices;
 
     @PostMapping
-    public ResponseEntity<?> addArticle(@RequestBody ArticlesDto articlesDto){
+    public ResponseEntity<?> addArticle(@RequestBody ArticlesDto articlesDto) {
         return articleServices.addArticle(articlesDto);
+    }
+
+    @PatchMapping
+    public ResponseEntity<?> editArticle(@RequestBody ArticlesDto articlesDto){
+        return articleServices.editArticle(articlesDto);
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<?> deleteArticleById(@PathVariable Integer id) {
+        return articleServices.deleteArticleById(id);
+    }
+
+    @GetMapping("by-id/{id}")
+    public ResponseEntity<?> getArticleById(@PathVariable Integer id) {
+        return articleServices.getArticleById(id);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllArticles() {
+        return articleServices.getAllArticles();
     }
 
 }

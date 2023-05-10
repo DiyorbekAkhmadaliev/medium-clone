@@ -1,14 +1,19 @@
 package uz.nt.mediumclone.model;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity(name = "users")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserEntity implements Serializable{
     @Id
     @GeneratedValue(generator = "user_id",strategy = GenerationType.IDENTITY)
@@ -24,6 +29,8 @@ public class UserEntity implements Serializable{
     private String email;
 
     private String bio;
+    @ManyToMany(mappedBy = "likes")
+    private List<Article> likes;
 //
 //    @OneToOne
 //    private Image image;

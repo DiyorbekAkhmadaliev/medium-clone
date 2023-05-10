@@ -4,14 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.nt.mediumclone.dto.UserDto;
+import uz.nt.mediumclone.model.Article;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TagDto {
+public class CommentsDto {
 
     private Integer id;
-    private String name;
-    private Integer num_of_usage;
+    private String body;
+    private UserDto author;
+    private ArticlesDto article;
+
 }

@@ -18,8 +18,8 @@ public class Follows {
     @GeneratedValue(generator = "followsIdSeq")
     @SequenceGenerator(name = "follows_id_seq", sequenceName = "follows_id_seq", allocationSize = 1)
     private Integer id;
-    @ManyToOne(targetEntity = UserEntity.class)
-    private UserEntity following;
-    @ManyToOne(targetEntity = UserEntity.class)
-    private UserEntity followed;
+    @ManyToOne(targetEntity = User.class)
+    private User following;
+    @ManyToOne(targetEntity = User.class)
+    private User followed;
 }

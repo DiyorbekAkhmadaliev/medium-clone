@@ -18,8 +18,8 @@ public class Comments {
     @SequenceGenerator(name = "comment_id_seq", sequenceName = "comment_id_seq", allocationSize = 1)
     private Integer id;
     private String body;
-    @ManyToOne(targetEntity = UserEntity.class)
-    private UserEntity author;
+    @ManyToOne(targetEntity = User.class)
+    private User author;
     @ManyToOne(targetEntity = Article.class)
     private Article article;
 }

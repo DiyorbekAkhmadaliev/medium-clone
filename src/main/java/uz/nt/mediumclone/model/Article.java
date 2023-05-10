@@ -34,7 +34,7 @@ public class Article {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "article_id")
     )
-    private List<UserEntity> likes;
+    private List<User> likes;
     private LocalDateTime publishDate;
     private LocalDateTime updatedAt;
 }

@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Entity(name = "Users")
 @Getter
 @Setter
-public class UserEntity implements Serializable{
+public class User implements Serializable{
     @Id
     @GeneratedValue(generator = "user_id",strategy = GenerationType.IDENTITY)
     private Integer id;

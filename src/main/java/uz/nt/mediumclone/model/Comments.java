@@ -18,6 +18,6 @@ public class Comments {
     @Id
     private Integer id;
     private String body;
-    @ManyToOne(targetEntity = UserEntity.class)
-    private UserEntity user;
+    @ManyToOne(targetEntity = User.class)
+    private User user;
 }

@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.nt.mediumclone.dto.UserDto;
+import uz.nt.mediumclone.model.Follows;
 import uz.nt.mediumclone.model.User;
+import uz.nt.mediumclone.repository.FollowsRepository;
 import uz.nt.mediumclone.repository.UserRepository;
 import uz.nt.mediumclone.service.UserService;
 import uz.nt.mediumclone.service.mapper.UserMapper;
@@ -17,6 +19,9 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private FollowsRepository followsRepository;
 
 
     public ResponseEntity<?> addUser(UserDto userDto){
@@ -57,6 +62,21 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.ok().body("User id deleted");
         }
         return ResponseEntity.status(404).body("User is not found");
+    }
+
+    @Override
+    public ResponseEntity<?> followUser(Integer follower, Integer following) {
+        User followerEntity = User.builder().id(follower).build();
+        User followingEntity = User.builder().id(following).build();
+
+        try {
+            return ResponseEntity.ok().body(followsRepository.save(Follows.builder()
+                    .follower(followerEntity)
+                    .following(followingEntity)
+                    .build()));
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
 

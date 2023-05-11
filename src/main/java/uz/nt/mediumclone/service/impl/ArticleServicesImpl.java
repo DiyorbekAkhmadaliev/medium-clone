@@ -8,8 +8,10 @@ import uz.nt.mediumclone.dto.ArticlesDto;
 import uz.nt.mediumclone.exeption.DatabaseException;
 import uz.nt.mediumclone.model.Article;
 import uz.nt.mediumclone.model.Tag;
+import uz.nt.mediumclone.model.User;
 import uz.nt.mediumclone.repository.ArticleRepository;
 import uz.nt.mediumclone.repository.TagsRepository;
+import uz.nt.mediumclone.repository.UserRepository;
 import uz.nt.mediumclone.service.ArticleServices;
 import uz.nt.mediumclone.service.mapper.ArticleMapper;
 
@@ -28,6 +30,7 @@ public class ArticleServicesImpl implements ArticleServices {
     private ArticleMapper articleMapper;
 
     private final TagsRepository tagsRepository;
+    private final UserRepository userRepository;
 
     @Override
     public ResponseEntity<ArticlesDto> addArticle(ArticlesDto articlesDto) {
@@ -132,5 +135,49 @@ public class ArticleServicesImpl implements ArticleServices {
         }
         articleRepository.save(article);
         return ResponseEntity.accepted().body(articleMapper.toDto(article));
+    }
+
+    @Override
+    public ResponseEntity<?> addLike(Integer articleId) {
+        Optional<User> optionalUser = userRepository.findById(1);
+        Optional<Article> optionalArticle = articleRepository.findById(articleId);
+        if (optionalArticle.isPresent() && optionalUser.isPresent()){
+            Article article = optionalArticle.get();
+            User user = optionalUser.get();
+            List<User> articleLikes = article.getLikes();
+            articleLikes.add(user);
+            article.setLikes(articleLikes);
+            articleRepository.save(article);
+
+            List<Article> userLikes = user.getLikes();
+            userLikes.add(article);
+            user.setLikes(userLikes);
+            userRepository.save(user);
+
+            return ResponseEntity.ok(article);
+        }
+        return ResponseEntity.badRequest().body("Article or user not found");
+    }
+
+    @Override
+    public ResponseEntity<?> deleteLike(Integer articleId) {
+        Optional<User> optionalUser = userRepository.findById(1);
+        Optional<Article> optionalArticle = articleRepository.findById(articleId);
+        if (optionalArticle.isPresent() && optionalUser.isPresent()){
+            Article article = optionalArticle.get();
+            User user = optionalUser.get();
+            List<User> articleLikes = article.getLikes();
+            articleLikes.remove(user);
+            article.setLikes(articleLikes);
+            articleRepository.save(article);
+
+            List<Article> userLikes = user.getLikes();
+            userLikes.remove(article);
+            user.setLikes(userLikes);
+            userRepository.save(user);
+
+            return ResponseEntity.ok(article);
+        }
+        return ResponseEntity.badRequest().body("Article or user not found");
     }
 }

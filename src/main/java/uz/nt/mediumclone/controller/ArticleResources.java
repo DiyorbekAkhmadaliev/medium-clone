@@ -38,4 +38,13 @@ public class ArticleResources {
         return articleServices.getAllArticles();
     }
 
+    @PostMapping("/{articleId}/like")
+    public ResponseEntity<?> addLikes(@PathVariable Integer articleId){
+        return articleServices.addLike(articleId);
+    }
+
+    @DeleteMapping("/{articleId}/like")
+    public ResponseEntity<?> deleteLikes(@PathVariable Integer articleId){
+        return articleServices.deleteLike(articleId);
+    }
 }

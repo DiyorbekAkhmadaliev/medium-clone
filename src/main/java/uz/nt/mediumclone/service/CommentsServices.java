@@ -5,6 +5,6 @@ import uz.nt.mediumclone.dto.CommentsDto;
 
 public interface CommentsServices {
 
-    ResponseEntity<?> addComment(CommentsDto commentsDto);
-    ResponseEntity<?> getCommentsByArticleId(Integer article_id);
+    ResponseEntity<String> addComment(CommentsDto commentsDto);
+    ResponseEntity<CommentsDto> getCommentsByArticleId(Integer article_id);
 }

@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.nt.mediumclone.dto.ArticlesDto;
-import uz.nt.mediumclone.exceptions.DatabaseException;
+import uz.nt.mediumclone.exeption.DatabaseException;
 import uz.nt.mediumclone.model.Article;
 import uz.nt.mediumclone.model.Tag;
 import uz.nt.mediumclone.repository.ArticleRepository;

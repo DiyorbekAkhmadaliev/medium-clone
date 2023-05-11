@@ -9,7 +9,7 @@ import uz.nt.mediumclone.model.Article;
 
 @Mapper(componentModel = "spring")
 public abstract class ArticleMapper implements CommonMapper<ArticlesDto, Article> {
-
+    @Mapping(target = "likes", ignore = true)
     public abstract Article toEntity(ArticlesDto articlesDto);
 
 }

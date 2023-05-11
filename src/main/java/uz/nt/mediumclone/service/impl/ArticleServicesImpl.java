@@ -5,16 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.nt.mediumclone.dto.ArticlesDto;
+import uz.nt.mediumclone.exceptions.DatabaseException;
 import uz.nt.mediumclone.model.Article;
 import uz.nt.mediumclone.model.Tag;
 import uz.nt.mediumclone.repository.ArticleRepository;
+import uz.nt.mediumclone.repository.TagsRepository;
 import uz.nt.mediumclone.service.ArticleServices;
 import uz.nt.mediumclone.service.mapper.ArticleMapper;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -25,17 +27,40 @@ public class ArticleServicesImpl implements ArticleServices {
     @Autowired
     private ArticleMapper articleMapper;
 
-    @Override
-    public ResponseEntity<?> addArticle(ArticlesDto articlesDto) {
+    private final TagsRepository tagsRepository;
 
+    @Override
+    public ResponseEntity<ArticlesDto> addArticle(ArticlesDto articlesDto) {
+        identifyNewTagsAndSaveThem(articlesDto.getTags());
         try {
             return ResponseEntity
                     .ok()
-                    .body(articleMapper.toDto(articleRepository.save(articleMapper.toEntity(articlesDto))));
+                    .body(
+                            articleMapper.toDto(
+                                    articleRepository.save(articleMapper.toEntity(articlesDto))));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(500).body(null);
+            throw new DatabaseException("Error while saving article to database: " + e.getMessage());
         }
+
+    }
+
+    private void identifyNewTagsAndSaveThem(List<String> listOfTags) {
+
+        Set<String> existingTags = StreamSupport.stream(tagsRepository.findAll().spliterator(), false)
+                .map(Tag::getName)
+                .collect(Collectors.toSet());
+
+
+        listOfTags.stream()
+                .filter(tag -> !existingTags.contains(tag))
+                .map(tag -> Tag.builder().name(tag).build())
+                .forEach(tag -> {
+                    try {
+                        tagsRepository.save(tag);
+                    } catch (Exception e) {
+                        throw new DatabaseException("Error while saving new tags: " + e.getMessage());
+                    }
+                });
     }
 
     @Override
@@ -76,25 +101,25 @@ public class ArticleServicesImpl implements ArticleServices {
 
     @Override
     public ResponseEntity<?> editArticle(ArticlesDto articlesDto) {
-        if (articlesDto.getId() == null){
+        if (articlesDto.getId() == null) {
             return ResponseEntity.ofNullable(articlesDto);
         }
 
         Optional<Article> articleOptional = articleRepository.findById(articlesDto.getId());
 
-        if (articleOptional.isEmpty()){
+        if (articleOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
         Article article = articleOptional.get();
 
-        if (articlesDto.getTitle()!=null){
+        if (articlesDto.getTitle() != null) {
             article.setTitle(articlesDto.getTitle());
         }
-        if (articlesDto.getAbout()!=null){
+        if (articlesDto.getAbout() != null) {
             article.setAbout(articlesDto.getAbout());
         }
-        if (articlesDto.getBody()!=null){
+        if (articlesDto.getBody() != null) {
             article.setBody(articlesDto.getBody());
         }
 //        if (articlesDto.getTags()!=null){
@@ -102,7 +127,7 @@ public class ArticleServicesImpl implements ArticleServices {
 //            articlesDto.getTags().stream().map(s -> list.add(new Tag(s)))
 //            article.setTags();
 //        }
-        if (articlesDto.getUpdatedAt()!=null){
+        if (articlesDto.getUpdatedAt() != null) {
             article.setUpdatedAt(LocalDateTime.now());
         }
         articleRepository.save(article);

@@ -1,4 +1,4 @@
-package uz.nt.mediumclone.exceptions;
+package uz.nt.mediumclone.exeption;
 
 public class DatabaseException extends RuntimeException {
 

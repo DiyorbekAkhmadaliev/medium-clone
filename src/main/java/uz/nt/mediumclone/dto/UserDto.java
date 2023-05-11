@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,7 @@ public class UserDto {
     @NotNull(message = "email shouldn't be null")
     @NotEmpty(message = "email shouldn't be empty")
     private String email;
+    @Size(max = 70,message = "bio shouldn't be longer than 70 characters")
     private String bio;
 //    private Image image;
 }

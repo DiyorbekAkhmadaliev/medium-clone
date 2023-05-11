@@ -26,6 +26,7 @@ public class User implements Serializable{
     @Column(nullable = false,unique = true)
     private String email;
 
+    @Column(length = 70)
     private String bio;
     @ManyToMany(mappedBy = "likes")
     private List<Article> likes;

@@ -1,11 +1,14 @@
 package uz.nt.mediumclone.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.nt.mediumclone.dto.FollowDto;
 import uz.nt.mediumclone.dto.UserDto;
+import uz.nt.mediumclone.exeption.UserNotFoundException;
+import uz.nt.mediumclone.exeption.UserNotSavedException;
 import uz.nt.mediumclone.model.Follows;
 import uz.nt.mediumclone.model.User;
 import uz.nt.mediumclone.repository.FollowsRepository;
@@ -14,6 +17,7 @@ import uz.nt.mediumclone.service.UserService;
 import uz.nt.mediumclone.service.mapper.FollowMapper;
 import uz.nt.mediumclone.service.mapper.UserMapper;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -31,12 +35,20 @@ public class UserServiceImpl implements UserService {
 
 
     public ResponseEntity<UserDto> addUser(UserDto userDto){
+        try{
             return new ResponseEntity<>(userMapper.toDto(userRepository.save(userMapper.toEntity(userDto))), HttpStatus.CREATED);
+        }
+        catch (InvalidDataAccessResourceUsageException e){
+            throw new UserNotSavedException("User is not saved");
+        }
     }
 
     public ResponseEntity<UserDto> getUser(Integer id){
-        Optional<User> userEntity = userRepository.findFirstById(id);
-        return new ResponseEntity<>(userEntity.map((m)-> userMapper.toDto(m)).orElseThrow(),HttpStatus.OK);
+        try{
+            return new ResponseEntity<>(userRepository.findFirstById(id).map((m)-> userMapper.toDto(m)).orElseThrow(),HttpStatus.OK);
+        }catch (NoSuchElementException e){
+            throw new UserNotFoundException("User is not found");
+        }
     }
 
     public ResponseEntity<UserDto> updateUser(UserDto userDto){

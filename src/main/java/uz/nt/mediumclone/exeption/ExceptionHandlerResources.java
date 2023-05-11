@@ -20,4 +20,21 @@ public class ExceptionHandlerResources {
             });
             return map;
         }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(UserNotSavedException.class)
+        public Map<String,String> handleBusinessException(UserNotSavedException e){
+            Map<String,String> map =  new HashMap<>();
+            map.put("errorMessage",e.getMessage());
+            return map;
+        }
+
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserNotFoundException.class)
+    public Map<String,String> handleBusinessException(UserNotFoundException e){
+        Map<String,String> map =  new HashMap<>();
+        map.put("errorMessage",e.getMessage());
+        return map;
+    }
 }

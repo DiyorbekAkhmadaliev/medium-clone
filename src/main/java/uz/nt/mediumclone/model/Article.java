@@ -24,10 +24,16 @@ public class Article {
     private String body;
     private String about;
     private Integer author_id;
-    @ElementCollection
-    @CollectionTable(name = "article_tag", joinColumns = @JoinColumn(name = "article_id"))
-    @Column(name = "tag")
-    private List<String> tags;
+//    @ElementCollection
+//    @CollectionTable(name = "article_tag", joinColumns = @JoinColumn(name = "article_id"))
+//    @Column(name = "tag")
+    @ManyToMany
+    @JoinTable(
+            name = "article_tag",
+            joinColumns = @JoinColumn(name = "article_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags;
     @ManyToMany
     @JoinTable(
             name = "likes",

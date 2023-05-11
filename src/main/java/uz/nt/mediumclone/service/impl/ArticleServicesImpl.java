@@ -6,11 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.nt.mediumclone.dto.ArticlesDto;
 import uz.nt.mediumclone.model.Article;
+import uz.nt.mediumclone.model.Tag;
 import uz.nt.mediumclone.repository.ArticleRepository;
 import uz.nt.mediumclone.service.ArticleServices;
 import uz.nt.mediumclone.service.mapper.ArticleMapper;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +27,7 @@ public class ArticleServicesImpl implements ArticleServices {
 
     @Override
     public ResponseEntity<?> addArticle(ArticlesDto articlesDto) {
+
         try {
             return ResponseEntity
                     .ok()
@@ -94,9 +97,11 @@ public class ArticleServicesImpl implements ArticleServices {
         if (articlesDto.getBody()!=null){
             article.setBody(articlesDto.getBody());
         }
-        if (articlesDto.getTags()!=null){
-            article.setTags(articlesDto.getTags());
-        }
+//        if (articlesDto.getTags()!=null){
+//            List<Tag> list = new ArrayList<>();
+//            articlesDto.getTags().stream().map(s -> list.add(new Tag(s)))
+//            article.setTags();
+//        }
         if (articlesDto.getUpdatedAt()!=null){
             article.setUpdatedAt(LocalDateTime.now());
         }

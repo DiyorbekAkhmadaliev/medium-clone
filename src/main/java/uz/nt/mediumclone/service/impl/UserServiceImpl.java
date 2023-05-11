@@ -56,12 +56,21 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public ResponseEntity<?> deleteUser(Integer id){
-        if (userRepository.existsById(id)){
-            userRepository.deleteById(id);
-            return ResponseEntity.ok().body("User id deleted");
+
+
+    @Override
+    public ResponseEntity<?> followUser(Integer follower, Integer following) {
+        User followerEntity = User.builder().id(follower).build();
+        User followingEntity = User.builder().id(following).build();
+
+        try {
+            return ResponseEntity.ok().body(followsRepository.save(Follows.builder()
+                    .follower(followerEntity)
+                    .following(followingEntity)
+                    .build()));
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
-        return ResponseEntity.status(404).body("User is not found");
     }
 
     @Override

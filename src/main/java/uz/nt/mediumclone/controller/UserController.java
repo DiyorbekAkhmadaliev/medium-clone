@@ -30,8 +30,10 @@ public class UserController {
         return userService.updateUser(userDto);
     }
 
-    @DeleteMapping ResponseEntity<?> deleteUser(@RequestParam Integer id){
-        return userService.deleteUser(id);
+
+    @PostMapping("follow/{follower}/{following}")
+    public ResponseEntity<?> followUser(@PathVariable Integer follower, @PathVariable Integer following){
+        return userService.followUser(follower, following);
     }
 
     @PostMapping("follow/{follower}/{following}")

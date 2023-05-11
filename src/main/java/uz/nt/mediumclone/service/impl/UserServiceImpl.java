@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
             return new ResponseEntity<>(userMapper.toDto(userRepository.save(userMapper.toEntity(userDto))), HttpStatus.CREATED);
         }
         catch (InvalidDataAccessResourceUsageException e){
-            throw new UserNotSavedException("User is not saved");
+            throw new UserNotSavedException("Database connection failed. User is not saved");
         }
     }
 
@@ -52,13 +52,32 @@ public class UserServiceImpl implements UserService {
     }
 
     public ResponseEntity<UserDto> updateUser(UserDto userDto){
-            User userEntity = new User();
-            userEntity.setId(userDto.getId());
-            if(userDto.getUsername() != null) userEntity.setUsername(userDto.getUsername());
-            if(userDto.getPassword() != null) userEntity.setPassword(userDto.getPassword());
-            if(userDto.getEmail() != null) userEntity.setEmail(userDto.getEmail());
-            if(userDto.getBio() != null) userEntity.setBio(userDto.getBio());
-            return new ResponseEntity<>(userMapper.toDto(userRepository.save(userEntity)),HttpStatus.OK);
+        if(userDto.getId() == null){
+            throw new UserNotFoundException("User id not found");
+        }else{
+            try{
+                if(userRepository.existsById(userDto.getId())){
+                    User userEntity = new User();
+                    userEntity.setId(userDto.getId());
+                    if(userDto.getUsername() != null) userEntity.setUsername(userDto.getUsername());
+                    if(userDto.getPassword() != null) userEntity.setPassword(userDto.getPassword());
+                    if(userDto.getEmail() != null) userEntity.setEmail(userDto.getEmail());
+                    if(userDto.getBio() != null) userEntity.setBio(userDto.getBio());
+                    try {
+                        return new ResponseEntity<>(userMapper.toDto(userRepository.save(userEntity)), HttpStatus.OK);
+                    }catch (NoSuchElementException e){
+                        throw new UserNotFoundException("User is not found");
+                    }
+                    catch (InvalidDataAccessResourceUsageException e){
+                        throw new UserNotSavedException("Database connection failed. User is not updated");
+                    }
+                }else throw new UserNotFoundException("User is not found");
+            }catch (InvalidDataAccessResourceUsageException e){
+                throw new UserNotSavedException("Database connection failed. User is not updated");
+            }
+
+        }
+
     }
 
 
@@ -68,11 +87,18 @@ public class UserServiceImpl implements UserService {
         User followerEntity = User.builder().id(follower).build();
         User followingEntity = User.builder().id(following).build();
 
+try{
+    return new ResponseEntity<>(followMapper.toDto(followsRepository.save(Follows.builder()
+            .follower(followerEntity)
+            .following(followingEntity)
+            .build())),HttpStatus.OK);
+    }catch (NoSuchElementException e){
+        throw new UserNotFoundException("User is not found");
+    }
+        catch (InvalidDataAccessResourceUsageException e){
+        throw new UserNotSavedException("User is not updated");
+    }
 
-            return new ResponseEntity<>(followMapper.toDto(followsRepository.save(Follows.builder()
-                    .follower(followerEntity)
-                    .following(followingEntity)
-                    .build())),HttpStatus.OK);
 
     }
 

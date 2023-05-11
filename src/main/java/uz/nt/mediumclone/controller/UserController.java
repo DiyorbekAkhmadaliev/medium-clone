@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.nt.mediumclone.dto.FollowDto;
 import uz.nt.mediumclone.dto.UserDto;
 import uz.nt.mediumclone.service.UserService;
 
@@ -17,8 +18,8 @@ public class UserController {
 
 
 
-    @PostMapping("/add-user")
-    private ResponseEntity<?> addUser(@Valid @RequestBody UserDto userDto){
+    @PostMapping("/sign-up")
+    private ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto){
 
         return userService.addUser(userDto);
     }
@@ -32,13 +33,10 @@ public class UserController {
 
 
     @PostMapping("follow/{follower}/{following}")
-    public ResponseEntity<?> followUser(@PathVariable Integer follower, @PathVariable Integer following){
+    public ResponseEntity<FollowDto> followUser(@PathVariable Integer follower, @PathVariable Integer following){
         return userService.followUser(follower, following);
     }
 
-    @PostMapping("follow/{follower}/{following}")
-    public ResponseEntity<?> followUser(@PathVariable Integer follower, @PathVariable Integer following){
-        return userService.followUser(follower, following);
-    }
+
 
 }

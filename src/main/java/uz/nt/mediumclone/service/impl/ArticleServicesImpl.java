@@ -2,6 +2,7 @@ package uz.nt.mediumclone.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.nt.mediumclone.dto.ArticlesDto;
@@ -26,16 +27,8 @@ public class ArticleServicesImpl implements ArticleServices {
     private ArticleMapper articleMapper;
 
     @Override
-    public ResponseEntity<?> addArticle(ArticlesDto articlesDto) {
-
-        try {
-            return ResponseEntity
-                    .ok()
-                    .body(articleMapper.toDto(articleRepository.save(articleMapper.toEntity(articlesDto))));
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(500).body(null);
-        }
+    public ResponseEntity<ArticlesDto> addArticle(ArticlesDto articlesDto) {
+            return new ResponseEntity<>(articleMapper.toDto(articleRepository.save(articleMapper.toEntity(articlesDto))), HttpStatus.OK);
     }
 
     @Override

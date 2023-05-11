@@ -17,14 +17,16 @@ public class UserDto {
 
 
     private Integer id;
-    @NotNull
-    @NotEmpty
+    @NotNull(message = "username shouldn't be null")
+    @NotEmpty(message = "username shouldn't be empty")
     private String username;
-    @NotNull
-    @NotEmpty
+    @NotNull(message = "password shouldn't be null")
+    @NotEmpty(message = "password shouldn't be empty")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-    @Email
+    @Email(message = "email is incorrectly")
+    @NotNull(message = "email shouldn't be null")
+    @NotEmpty(message = "email shouldn't be empty")
     private String email;
     private String bio;
 //    private Image image;

@@ -26,6 +26,7 @@ public class ImageSeriveImpl implements ImageService {
     @Override
     public ResponseEntity<?> imageUpload(MultipartFile file){
         File files = new File(filePath("upload"));
+
         try {
             file.transferTo(files);
             Image imageEntity = new Image();
@@ -33,7 +34,7 @@ public class ImageSeriveImpl implements ImageService {
             imageRepository.save(imageEntity);
             return ResponseEntity.status(201).body(imageEntity.getId());
         } catch (IOException e) {
-            return ResponseEntity.status(400).body("Not save");
+            return ResponseEntity.status(400).body(e.getMessage());
         }
 
 
@@ -61,7 +62,7 @@ public class ImageSeriveImpl implements ImageService {
             file.mkdirs();
         }
         String uuid = UUID.randomUUID().toString();
-        return file.getPath() + "\\"+ uuid;
+        return file.getPath() + "\\"+ uuid + ".jpg";
     }
 
 }

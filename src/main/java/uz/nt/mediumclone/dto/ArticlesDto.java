@@ -23,4 +23,8 @@ public class ArticlesDto {
     private Integer likes;
     private LocalDateTime publishDate;
     private LocalDateTime updatedAt;
+
+    public void setAllTags(List<String> tags){
+
+    }
 }

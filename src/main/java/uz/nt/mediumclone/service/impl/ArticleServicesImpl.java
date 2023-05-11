@@ -31,36 +31,43 @@ public class ArticleServicesImpl implements ArticleServices {
 
     @Override
     public ResponseEntity<ArticlesDto> addArticle(ArticlesDto articlesDto) {
-        identifyNewTagsAndSaveThem(articlesDto.getTags());
+        List<Tag> tagList = identifyNewTagsAndSaveThem(articlesDto.getTags());
+        Article article = articleMapper.toEntity(articlesDto);
+        article.setTags(tagList);
         try {
             return ResponseEntity
                     .ok()
                     .body(
                             articleMapper.toDto(
-                                    articleRepository.save(articleMapper.toEntity(articlesDto))));
+                                    articleRepository.save(article)));
         } catch (Exception e) {
             throw new DatabaseException("Error while saving article to database: " + e.getMessage());
         }
 
     }
 
-    private void identifyNewTagsAndSaveThem(List<String> listOfTags) {
+    private List<Tag> identifyNewTagsAndSaveThem(List<String> listOfTags) {
 
-        Set<String> existingTags = StreamSupport.stream(tagsRepository.findAll().spliterator(), false)
+
+        List<String> existingTags = StreamSupport.stream(tagsRepository.findAll().spliterator(), false)
                 .map(Tag::getName)
-                .collect(Collectors.toSet());
+                .toList();
 
+
+        List<Tag> tags = new ArrayList<>( existingTags.stream().map(tag -> Tag.builder().name(tag).build()).toList());
 
         listOfTags.stream()
                 .filter(tag -> !existingTags.contains(tag))
                 .map(tag -> Tag.builder().name(tag).build())
                 .forEach(tag -> {
                     try {
+                        tags.add(tag);
                         tagsRepository.save(tag);
                     } catch (Exception e) {
                         throw new DatabaseException("Error while saving new tags: " + e.getMessage());
                     }
                 });
+        return tags;
     }
 
     @Override

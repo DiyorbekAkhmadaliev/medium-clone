@@ -18,7 +18,7 @@ public class CommentsResources {
         return commentsServices.addComment(commentsDto);
     }
 
-    @GetMapping("by-id/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getCommentByArticleId(@PathVariable Integer id){
         return commentsServices.getCommentsByArticleId(id);
     }

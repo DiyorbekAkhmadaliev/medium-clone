@@ -31,9 +31,14 @@ public class ArticleServicesImpl implements ArticleServices {
 
     @Override
     public ResponseEntity<ArticlesDto> addArticle(ArticlesDto articlesDto) {
-        List<Tag> tagList = identifyNewTagsAndSaveThem(articlesDto.getTags());
+//        List<Tag> tagList = identifyNewTagsAndSaveThem(articlesDto.getTags());
+
+
+//        tagsRepository.saveNewTags(articlesDto.getTags());
+        articlesDto.getTags().forEach(tagsRepository::saveNewTags);
+
         Article article = articleMapper.toEntity(articlesDto);
-        article.setTags(tagList);
+        article.setTags(articlesDto.getTags().stream().map(t -> Tag.builder().name(t).build()).toList());
         try {
             return ResponseEntity
                     .ok()
@@ -53,8 +58,7 @@ public class ArticleServicesImpl implements ArticleServices {
                 .map(Tag::getName)
                 .toList();
 
-
-        List<Tag> tags = new ArrayList<>( existingTags.stream().map(tag -> Tag.builder().name(tag).build()).toList());
+        List<Tag> tags = new ArrayList<>();
 
         listOfTags.stream()
                 .filter(tag -> !existingTags.contains(tag))
@@ -71,7 +75,7 @@ public class ArticleServicesImpl implements ArticleServices {
     }
 
     @Override
-    public ResponseEntity<?> deleteArticleById(Integer id) {
+    public ResponseEntity<Void> deleteArticleById(Integer id) {
         if (id == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -107,7 +111,7 @@ public class ArticleServicesImpl implements ArticleServices {
     }
 
     @Override
-    public ResponseEntity<?> editArticle(ArticlesDto articlesDto) {
+    public ResponseEntity<ArticlesDto> editArticle(ArticlesDto articlesDto) {
         if (articlesDto.getId() == null) {
             return ResponseEntity.ofNullable(articlesDto);
         }
@@ -137,6 +141,7 @@ public class ArticleServicesImpl implements ArticleServices {
         if (articlesDto.getUpdatedAt() != null) {
             article.setUpdatedAt(LocalDateTime.now());
         }
+
         articleRepository.save(article);
         return ResponseEntity.accepted().body(articleMapper.toDto(article));
     }

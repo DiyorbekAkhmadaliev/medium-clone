@@ -5,7 +5,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import uz.nt.mediumclone.config.JwtService;
 import uz.nt.mediumclone.dto.FollowDto;
 import uz.nt.mediumclone.dto.UserDto;
 import uz.nt.mediumclone.exeption.UserNotFoundException;
@@ -30,14 +32,17 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private FollowMapper followMapper;
+    @Autowired
+    private JwtService jwtService;
 
     @Autowired
     private FollowsRepository followsRepository;
 
 
-    public ResponseEntity<UserDto> addUser(UserDto userDto){
+    public ResponseEntity<String> addUser(UserDto userDto){
         try{
-            return new ResponseEntity<>(userMapper.toDto(userRepository.save(userMapper.toEntity(userDto))), HttpStatus.CREATED);
+            var jwt = jwtService.generateToken(userRepository.save(userMapper.toEntity(userDto)));
+            return new ResponseEntity<>(jwt, HttpStatus.CREATED);
         }
         catch (InvalidDataAccessResourceUsageException e){
             throw new UserNotSavedException("database connection failed. user is not saved");

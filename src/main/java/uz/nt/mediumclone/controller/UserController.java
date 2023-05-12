@@ -18,13 +18,13 @@ public class UserController {
 
 
 
-    @PostMapping("/sign-up")
-    private ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto){
+    @PostMapping()
+    private ResponseEntity<String> addUser(@Valid @RequestBody UserDto userDto){
 
         return userService.addUser(userDto);
     }
 
-    @GetMapping({"/get-user/{id}"}) ResponseEntity<UserDto> getUser(@PathVariable Integer id){
+    @GetMapping({"/{id}"}) ResponseEntity<UserDto> getUser(@PathVariable Integer id){
         return userService.getUser(id);
     }
     @PatchMapping ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto){

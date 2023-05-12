@@ -21,14 +21,9 @@ public class ArticlesDto {
     private String body;
     private String about;
     private Integer author_id;
-//    private List<String> tags;
-    private List<Tag> tags;
-//    private Integer likes;
-private List<User> likes;
+    private List<String> tags;
+    private Integer likes;
     private LocalDateTime publishDate;
     private LocalDateTime updatedAt;
 
-    public void setAllTags(List<String> tags){
-
-    }
 }

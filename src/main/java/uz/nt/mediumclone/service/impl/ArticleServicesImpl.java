@@ -31,7 +31,8 @@ public class ArticleServicesImpl implements ArticleServices {
 
     @Override
     public ResponseEntity<ArticlesDto> addArticle(ArticlesDto articlesDto) {
-        List<Tag> tagList = identifyNewTagsAndSaveThem(articlesDto.getTags());
+//        List<Tag> tagList = identifyNewTagsAndSaveThem(articlesDto.getTags());
+                List<Tag> tagList = identifyNewTagsAndSaveThem(null);
         Article article = articleMapper.toEntity(articlesDto);
         article.setTags(tagList);
         try {

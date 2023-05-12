@@ -2,11 +2,12 @@ package uz.nt.mediumclone.service;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
-import uz.nt.mediumclone.dto.ImageDto;
+
+import java.io.IOException;
 
 public interface ImageService {
     ResponseEntity<?> imageUpload(MultipartFile file);
-    ResponseEntity<?> imageDowload(Integer id);
+    byte[] imageDowload(Integer id) throws IOException;
 
 
 }

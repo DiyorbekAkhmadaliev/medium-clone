@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uz.nt.mediumclone.service.ImageService;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/image")
 @RequiredArgsConstructor
@@ -17,8 +19,7 @@ public class ImageController {
     }
 
     @GetMapping()
-    public ResponseEntity dowloadImage(@PathVariable Integer id){
-        return null;
-//        return imageService.imageDowload(id);
+    public byte[] dowloadImage(@PathVariable Integer id) throws IOException {
+        return imageService.imageDowload(id);
     }
 }

@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import uz.nt.mediumclone.dto.ImageDto;
 import uz.nt.mediumclone.model.Image;
 import uz.nt.mediumclone.repository.ImageRepository;
 import uz.nt.mediumclone.service.ImageService;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -41,17 +41,12 @@ public class ImageSeriveImpl implements ImageService {
     }
 
     @Override
-    public ResponseEntity<?> imageDowload(Integer id) {
-        return null;
-    }
+    public byte[] imageDowload(Integer id) throws IOException {
+        Optional<Image> imageentity = imageRepository.findById(id);
+        String imagePath = imageentity.get().getPath();
+        return Files.readAllBytes(new File(imagePath).toPath());
 
-//    public ResponseEntity imageDowload(Integer id){
-//        Optional<Image> imageentity = imageRepository.findById(id);
-//        String imagePath = imageentity.get().getPath();
-//
-//
-//
-//    }
+    }
 
 
     public String filePath(String folder){

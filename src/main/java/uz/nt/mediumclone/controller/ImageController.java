@@ -1,5 +1,6 @@
 package uz.nt.mediumclone.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,8 @@ public class ImageController {
         return imageService.imageUpload(file);
     }
 
-    @GetMapping()
-    public byte[] dowloadImage(@PathVariable Integer id) throws IOException {
-        return imageService.imageDowload(id);
+    @GetMapping("/{id}")
+    public void dowloadImage(@PathVariable Integer id,HttpServletResponse response) throws IOException {
+        imageService.imageDowload(id, response);
     }
 }

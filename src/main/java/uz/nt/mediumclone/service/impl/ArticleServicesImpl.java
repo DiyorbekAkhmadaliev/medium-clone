@@ -161,6 +161,7 @@ public class ArticleServicesImpl implements ArticleServices {
 
     @Override
     public ResponseEntity<?> deleteLike(Integer articleId) {
+
         Optional<User> optionalUser = userRepository.findById(1);
         Optional<Article> optionalArticle = articleRepository.findById(articleId);
         if (optionalArticle.isPresent() && optionalUser.isPresent()){

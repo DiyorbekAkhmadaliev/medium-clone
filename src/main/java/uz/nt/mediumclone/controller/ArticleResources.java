@@ -52,4 +52,13 @@ public class ArticleResources {
     public ResponseEntity<?> getCommentByArticleId(@PathVariable Integer id){
         return commentsServices.getCommentsByArticleId(id);
     }
+
+    @PostMapping("/{articleId}/like")
+    public ResponseEntity<?> addLike(@PathVariable Integer articleId){
+        return articleServices.addLike(articleId);
+    }
+    @DeleteMapping("/{articleId}/like")
+    public ResponseEntity<?> deleteLike(@PathVariable Integer articleId){
+        return articleServices.deleteLike(articleId);
+    }
 }

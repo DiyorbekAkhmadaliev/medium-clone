@@ -10,4 +10,6 @@ public interface ArticleServices {
     ResponseEntity<?> getArticleById(Integer id);
     ResponseEntity<?> getAllArticles();
     ResponseEntity<ArticlesDto> editArticle(ArticlesDto articlesDto);
+    ResponseEntity<?> addLike(Integer articleId);
+    ResponseEntity<?> deleteLike(Integer articleId);
 }

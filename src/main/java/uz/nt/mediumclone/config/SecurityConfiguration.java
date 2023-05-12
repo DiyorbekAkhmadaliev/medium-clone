@@ -27,6 +27,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST,"/user", "/articles")
                 .permitAll()
+                .requestMatchers(HttpMethod.GET,"/image/**")
+                .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

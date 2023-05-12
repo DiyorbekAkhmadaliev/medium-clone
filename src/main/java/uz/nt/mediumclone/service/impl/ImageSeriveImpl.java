@@ -1,7 +1,9 @@
 package uz.nt.mediumclone.service.impl;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,7 +12,9 @@ import uz.nt.mediumclone.repository.ImageRepository;
 import uz.nt.mediumclone.service.ImageService;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +29,7 @@ public class ImageSeriveImpl implements ImageService {
 
     @Override
     public ResponseEntity<?> imageUpload(MultipartFile file){
-        File files = new File(filePath("upload"));
+        File files = new File(filePath("C:/Users/saida/Downloads/Telegram Desktop"));
 
         try {
             file.transferTo(files);
@@ -41,11 +45,13 @@ public class ImageSeriveImpl implements ImageService {
     }
 
     @Override
-    public byte[] imageDowload(Integer id) throws IOException {
+    public void imageDowload(Integer id, HttpServletResponse response) throws IOException {
         Optional<Image> imageentity = imageRepository.findById(id);
-        String imagePath = imageentity.get().getPath();
-        return Files.readAllBytes(new File(imagePath).toPath());
 
+
+        response.setContentType("image/jpeg");
+        InputStream is = new FileInputStream(new File(imageentity.get().getPath()));
+        IOUtils.copy(is, response.getOutputStream());
     }
 
 

@@ -27,7 +27,7 @@ public class UserController {
     @GetMapping({"/get-user/{id}"}) ResponseEntity<UserDto> getUser(@PathVariable Integer id){
         return userService.getUser(id);
     }
-    @PatchMapping ResponseEntity<?> updateUser(@RequestBody UserDto userDto){
+    @PatchMapping ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto){
         return userService.updateUser(userDto);
     }
 

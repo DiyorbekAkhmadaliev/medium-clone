@@ -20,7 +20,11 @@ public class ArticlesDto {
     private String about;
     private Integer author_id;
     private List<String> tags;
-    private List<UserDto> likes;
+    private Integer likes;
     private LocalDateTime publishDate;
     private LocalDateTime updatedAt;
+
+    public void setAllTags(List<String> tags){
+
+    }
 }

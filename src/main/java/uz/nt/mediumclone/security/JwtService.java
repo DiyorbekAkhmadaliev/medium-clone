@@ -1,4 +1,4 @@
-package uz.nt.mediumclone.config;
+package uz.nt.mediumclone.security;
 
 import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;

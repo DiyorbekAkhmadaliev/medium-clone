@@ -16,6 +16,6 @@ public abstract class CommentMapper implements CommonMapper<CommentsDto, Comment
     protected ArticleMapper articleMapper;
 
     @Mapping(target = "author", expression = "java(userMapper.toEntity(commentsDto.getAuthor()))")
-    @Mapping(target = "article", expression = "java(articleMapper.toEntity(commentsDto.getArticle()))")
+//    @Mapping(target = "article", expression = "java(articleMapper.toEntity(commentsDto.getArticle()))")
     public abstract Comments toEntity(CommentsDto commentsDto);
 }

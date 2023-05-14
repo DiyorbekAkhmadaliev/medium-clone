@@ -5,9 +5,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import uz.nt.mediumclone.config.JwtService;
+import uz.nt.mediumclone.security.JwtService;
 import uz.nt.mediumclone.dto.FollowDto;
 import uz.nt.mediumclone.dto.UserDto;
 import uz.nt.mediumclone.exeption.UserNotFoundException;
@@ -16,6 +15,7 @@ import uz.nt.mediumclone.model.Follows;
 import uz.nt.mediumclone.model.User;
 import uz.nt.mediumclone.repository.FollowsRepository;
 import uz.nt.mediumclone.repository.UserRepository;
+import uz.nt.mediumclone.security.SecurityServices;
 import uz.nt.mediumclone.service.UserService;
 import uz.nt.mediumclone.service.mapper.FollowMapper;
 import uz.nt.mediumclone.service.mapper.UserMapper;
@@ -37,6 +37,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private FollowsRepository followsRepository;
+
+    @Autowired
+    private SecurityServices securityServices;
 
 
     public ResponseEntity<String> addUser(UserDto userDto) {
@@ -92,13 +95,14 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ResponseEntity<FollowDto> followUser(Integer follower, Integer following) {
-        User followerEntity = User.builder().id(follower).build();
+    public ResponseEntity<FollowDto> followUser(Integer following) {
+
+        User user = securityServices.getLoggedUser();
         User followingEntity = User.builder().id(following).build();
 
         try {
             return new ResponseEntity<>(followMapper.toDto(followsRepository.save(Follows.builder()
-                    .follower(followerEntity)
+                    .follower(user)
                     .following(followingEntity)
                     .build())), HttpStatus.OK);
         } catch (NoSuchElementException e) {

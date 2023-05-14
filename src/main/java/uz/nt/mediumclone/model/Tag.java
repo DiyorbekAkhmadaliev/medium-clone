@@ -3,8 +3,6 @@ package uz.nt.mediumclone.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
@@ -17,7 +15,8 @@ public class Tag {
     @GeneratedValue(generator = "tag_id_seq")
     @SequenceGenerator(name = "tag_id_seq", sequenceName = "tag_id_seq", allocationSize = 1)
     private Integer id;
+    @Column(unique = true)
     private String name;
-    @ManyToMany(mappedBy = "tags")
-    private List<Article> article;
+//    @ManyToMany(mappedBy = "tags")
+//    private List<Article> article;
 }

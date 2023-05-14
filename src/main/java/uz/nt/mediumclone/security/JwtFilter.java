@@ -1,6 +1,5 @@
-package uz.nt.mediumclone.config;
+package uz.nt.mediumclone.security;
 
-import com.google.gson.Gson;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import uz.nt.mediumclone.repository.UserRepository;
 
 import java.io.IOException;
 

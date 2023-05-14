@@ -1,17 +1,20 @@
 package uz.nt.mediumclone.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Article {
@@ -23,10 +26,8 @@ public class Article {
     private String title;
     private String body;
     private String about;
-    private Integer author_id;
-//    @ElementCollection
-//    @CollectionTable(name = "article_tag", joinColumns = @JoinColumn(name = "article_id"))
-//    @Column(name = "tag")
+    @ManyToOne
+    private User author;
     @ManyToMany
     @JoinTable(
             name = "article_tag",
@@ -40,7 +41,11 @@ public class Article {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "article_id")
     )
-    private List<User> likes;
+    private List<User> likes = Collections.emptyList();
+    @CreationTimestamp
+    @CreatedDate
     private LocalDateTime publishDate;
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
 }

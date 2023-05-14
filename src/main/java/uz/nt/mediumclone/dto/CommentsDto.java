@@ -16,6 +16,5 @@ public class CommentsDto {
     private Integer id;
     private String body;
     private UserDto author;
-    private ArticlesDto article;
 
 }

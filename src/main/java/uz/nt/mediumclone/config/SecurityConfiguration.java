@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import uz.nt.mediumclone.security.JwtFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -25,12 +26,12 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST,"/user", "/articles")
-                .permitAll()
+//                .requestMatchers(HttpMethod.POST,"/user", "/articles")
                 .requestMatchers(HttpMethod.GET,"/image/**")
                 .permitAll()
                 .anyRequest()
-                .authenticated()
+                .permitAll()
+//                .authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -1,5 +1,7 @@
 package uz.nt.mediumclone.config;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,14 +20,19 @@ import uz.nt.mediumclone.repository.UserRepository;
 @RequiredArgsConstructor
 public class ApplicationConfig {
     private final UserRepository userRepository;
+
+    private final LocalDateTimeDeserializer localDateTimeDeserializer;
+    private final LocalDateTimeSerializer localDateTimeSerializer;
+
     @Bean
-    public UserDetailsService userDetailsService(){
+    public UserDetailsService userDetailsService() {
         return (username) ->
-            userRepository.findFirstByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                userRepository.findFirstByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService());
         authenticationProvider.setPasswordEncoder(passwordEncoder());
@@ -36,10 +43,18 @@ public class ApplicationConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public Gson gson() {
+        GsonBuilder gson = new GsonBuilder();
 
+        gson.registerTypeAdapter(LocalDateTimeSerializer.class, localDateTimeSerializer);
+        gson.registerTypeAdapter(LocalDateTimeDeserializer.class, localDateTimeDeserializer);
+        return gson.create();
+    }
 }

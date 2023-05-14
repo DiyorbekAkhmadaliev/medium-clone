@@ -11,6 +11,6 @@ public interface UserService {
 
     ResponseEntity<UserDto> updateUser(UserDto userDto);
 
-    ResponseEntity<FollowDto> followUser(Integer follower, Integer following);
+    ResponseEntity<FollowDto> followUser(Integer following);
 }
 

@@ -1,83 +1,55 @@
 package uz.nt.mediumclone.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.nt.mediumclone.dto.ArticlesDto;
 import uz.nt.mediumclone.exeption.DatabaseException;
+import uz.nt.mediumclone.exeption.NotAllowedException;
 import uz.nt.mediumclone.model.Article;
 import uz.nt.mediumclone.model.Tag;
 import uz.nt.mediumclone.model.User;
 import uz.nt.mediumclone.repository.ArticleRepository;
-import uz.nt.mediumclone.repository.TagsRepository;
 import uz.nt.mediumclone.repository.UserRepository;
+import uz.nt.mediumclone.security.SecurityServices;
 import uz.nt.mediumclone.service.ArticleServices;
+import uz.nt.mediumclone.service.TagServices;
 import uz.nt.mediumclone.service.mapper.ArticleMapper;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import java.util.List;
+import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ArticleServicesImpl implements ArticleServices {
-    @Autowired
-    private ArticleRepository articleRepository;
-
-    @Autowired
-    private ArticleMapper articleMapper;
-
-    private final TagsRepository tagsRepository;
+    private final ArticleRepository articleRepository;
+    private final ArticleMapper articleMapper;
     private final UserRepository userRepository;
+    private final TagServices tagService;
+    private final SecurityServices securityServices;
 
     @Override
+    @Transactional
     public ResponseEntity<ArticlesDto> addArticle(ArticlesDto articlesDto) {
-//        List<Tag> tagList = identifyNewTagsAndSaveThem(articlesDto.getTags());
-
-
-//        tagsRepository.saveNewTags(articlesDto.getTags());
-        articlesDto.getTags().forEach(tagsRepository::saveNewTags);
-
+        List<Tag> list = tagService.addTags(articlesDto.getTags());
         Article article = articleMapper.toEntity(articlesDto);
-        article.setTags(articlesDto.getTags().stream().map(t -> Tag.builder().name(t).build()).toList());
+        Optional<User> user = userRepository.findById(1);
+        article.setAuthor(user.get());
+        article.setTags(list);
+
+        Article savedArticle = articleRepository.save(article);
+        savedArticle.setPublishDate(LocalDateTime.now());
+        savedArticle.setUpdatedAt(LocalDateTime.now());
         try {
-            return ResponseEntity
-                    .ok()
-                    .body(
-                            articleMapper.toDto(
-                                    articleRepository.save(article)));
+            return ResponseEntity.ok()
+                    .body(articleMapper.toDto(savedArticle));
         } catch (Exception e) {
             throw new DatabaseException("Error while saving article to database: " + e.getMessage());
         }
-
-    }
-
-    private List<Tag> identifyNewTagsAndSaveThem(List<String> listOfTags) {
-
-
-        List<String> existingTags = StreamSupport.stream(tagsRepository.findAll().spliterator(), false)
-                .map(Tag::getName)
-                .toList();
-
-        List<Tag> tags = new ArrayList<>();
-
-        listOfTags.stream()
-                .filter(tag -> !existingTags.contains(tag))
-                .map(tag -> Tag.builder().name(tag).build())
-                .forEach(tag -> {
-                    try {
-                        tags.add(tag);
-                        tagsRepository.save(tag);
-                    } catch (Exception e) {
-                        throw new DatabaseException("Error while saving new tags: " + e.getMessage());
-                    }
-                });
-        return tags;
     }
 
     @Override
@@ -97,7 +69,7 @@ public class ArticleServicesImpl implements ArticleServices {
     }
 
     @Override
-    public ResponseEntity<?> getArticleById(Integer id) {
+    public ResponseEntity<ArticlesDto> getArticleById(Integer id) {
         if (id == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -111,24 +83,14 @@ public class ArticleServicesImpl implements ArticleServices {
     }
 
     @Override
-    public ResponseEntity<?> getAllArticles() {
+    public ResponseEntity<List<ArticlesDto>> getAllArticles() {
         List<Article> articleOptional = articleRepository.findAll();
         return ResponseEntity.status(200).body(articleOptional.stream().map(articleMapper::toDto).toList());
     }
 
     @Override
-    public ResponseEntity<ArticlesDto> editArticle(ArticlesDto articlesDto) {
-        if (articlesDto.getId() == null) {
-            return ResponseEntity.ofNullable(articlesDto);
-        }
-
-        Optional<Article> articleOptional = articleRepository.findById(articlesDto.getId());
-
-        if (articleOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Article article = articleOptional.get();
+    public ResponseEntity<ArticlesDto> editArticle(ArticlesDto articlesDto) throws NotAllowedException {
+        Article article = isValidArticle(articlesDto).getBody();
 
         if (articlesDto.getTitle() != null) {
             article.setTitle(articlesDto.getTitle());
@@ -139,78 +101,73 @@ public class ArticleServicesImpl implements ArticleServices {
         if (articlesDto.getBody() != null) {
             article.setBody(articlesDto.getBody());
         }
-//        if (articlesDto.getTags()!=null){
-//            List<Tag> list = new ArrayList<>();
-//            articlesDto.getTags().stream().map(s -> list.add(new Tag(s)))
-//            article.setTags();
-//        }
-        if (articlesDto.getUpdatedAt() != null) {
-            article.setUpdatedAt(LocalDateTime.now());
+        if (articlesDto.getTags()!=null){
+            List<Tag> tagList = tagService.addTags(articlesDto.getTags());
+            article.setTags(tagList);
         }
 
-        articleRepository.save(article);
-        return ResponseEntity.accepted().body(articleMapper.toDto(article));
+        return ResponseEntity.ok()
+                .body(articleMapper.toDto(articleRepository.save(article)));
+    }
+
+    private ResponseEntity<Article> isValidArticle(ArticlesDto articlesDto) throws NotAllowedException {
+        if (articlesDto.getId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<Article> articleOptional = articleRepository.findById(articlesDto.getId());
+
+        if (articleOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Article article = articleOptional.get();
+
+        if (!article.getAuthor().getUsername().equals(securityServices.getLoggedUser().getUsername())) {
+            throw new NotAllowedException();
+        }
+        return ResponseEntity.ok().body(article);
     }
 
     @Override
-    public ResponseEntity<?> addLike(Integer articleId) {
-        Optional<User> optionalUser = userRepository.findFirstByUsername(getUserUsername());
+    public ResponseEntity<ArticlesDto> addLike(Integer articleId) {
+        User loggedUser = securityServices.getLoggedUser();
         Optional<Article> optionalArticle = articleRepository.findById(articleId);
-        if (optionalArticle.isPresent() && optionalUser.isPresent()){
+        if (optionalArticle.isPresent()) {
             Article article = optionalArticle.get();
-            User user = optionalUser.get();
             List<User> articleLikes = article.getLikes();
-            articleLikes.add(user);
+            articleLikes.add(loggedUser);
             article.setLikes(articleLikes);
             articleRepository.save(article);
 
-            List<Article> userLikes = user.getLikes();
+            List<Article> userLikes = loggedUser.getLikes();
             userLikes.add(article);
-            user.setLikes(userLikes);
-            userRepository.save(user);
+            loggedUser.setLikes(userLikes);
+            userRepository.save(loggedUser);
 
-            return ResponseEntity.ok(article);
+            return ResponseEntity.ok().body(articleMapper.toDto(article));
         }
-        return ResponseEntity.badRequest().body("Article or user not found");
+        return ResponseEntity.badRequest().build();
     }
 
     @Override
-    public ResponseEntity<?> deleteLike(Integer articleId) {
-
-        Optional<User> optionalUser = userRepository.findFirstByUsername(getUserUsername());
+    public ResponseEntity<ArticlesDto> deleteLike(Integer articleId) {
+        User loggedUser = securityServices.getLoggedUser();
         Optional<Article> optionalArticle = articleRepository.findById(articleId);
-        if (optionalArticle.isPresent() && optionalUser.isPresent()) {
+        if (optionalArticle.isPresent()) {
             Article article = optionalArticle.get();
-            User user = optionalUser.get();
             List<User> articleLikes = article.getLikes();
-            articleLikes.remove(user);
+            articleLikes.remove(loggedUser);
             article.setLikes(articleLikes);
             articleRepository.save(article);
 
-            List<Article> userLikes = user.getLikes();
+            List<Article> userLikes = loggedUser.getLikes();
             userLikes.remove(article);
-            user.setLikes(userLikes);
-            userRepository.save(user);
+            loggedUser.setLikes(userLikes);
+            userRepository.save(loggedUser);
 
-            return ResponseEntity.ok(article);
+            return ResponseEntity.ok().body(articleMapper.toDto(article));
         }
-        return ResponseEntity.badRequest().body("Article or user not found");
-    }
-
-    public String getUserUsername(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username1 = null;
-        if (authentication != null && authentication.isAuthenticated()) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof UserDetails) {
-                UserDetails userDetails = (UserDetails) principal;
-                // Access user details
-                username1 = userDetails.getUsername();
-                // ...
-            } else {
-                // Handle other types of authentication
-            }
-        }
-        return username1;
+        return ResponseEntity.badRequest().build();
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.mediumclone.dto.ArticlesDto;
 import uz.nt.mediumclone.dto.CommentsDto;
+import uz.nt.mediumclone.exeption.NotAllowedException;
 import uz.nt.mediumclone.service.ArticleServices;
 import uz.nt.mediumclone.service.CommentsServices;
 
@@ -15,8 +16,6 @@ public class ArticleResources {
     @Autowired
     private ArticleServices articleServices;
 
-    @Autowired
-    private CommentsServices commentsServices;
 
     @PostMapping
     public ResponseEntity<ArticlesDto> addArticle(@RequestBody ArticlesDto articlesDto) {
@@ -24,7 +23,7 @@ public class ArticleResources {
     }
 
     @PatchMapping
-    public ResponseEntity<ArticlesDto> editArticle(@RequestBody ArticlesDto articlesDto){
+    public ResponseEntity<ArticlesDto> editArticle(@RequestBody ArticlesDto articlesDto) throws NotAllowedException {
         return articleServices.editArticle(articlesDto);
     }
 
@@ -43,22 +42,13 @@ public class ArticleResources {
         return articleServices.getAllArticles();
     }
 
-    @PostMapping("/{article_id}/comment")
-    public ResponseEntity<CommentsDto> addComment(@PathVariable Integer article_id, @RequestBody CommentsDto commentsDto){
-        return commentsServices.addComment(commentsDto);
-    }
-
-    @GetMapping("/{article_id}/{comment_id}")
-    public ResponseEntity<?> getCommentByArticleId(@PathVariable Integer id){
-        return commentsServices.getCommentsByArticleId(id);
-    }
-
     @PostMapping("/{articleId}/like")
-    public ResponseEntity<?> addLike(@PathVariable Integer articleId){
+    public ResponseEntity<?> addLike(@PathVariable Integer articleId) {
         return articleServices.addLike(articleId);
     }
+
     @DeleteMapping("/{articleId}/like")
-    public ResponseEntity<?> deleteLike(@PathVariable Integer articleId){
+    public ResponseEntity<?> deleteLike(@PathVariable Integer articleId) {
         return articleServices.deleteLike(articleId);
     }
 }

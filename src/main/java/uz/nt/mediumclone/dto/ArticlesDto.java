@@ -20,7 +20,7 @@ public class ArticlesDto {
     private String title;
     private String body;
     private String about;
-    private Integer author_id;
+    private UserDto author;
     private List<String> tags;
     private Integer likes;
     private LocalDateTime publishDate;

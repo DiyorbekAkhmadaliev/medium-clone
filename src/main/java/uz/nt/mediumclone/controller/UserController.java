@@ -16,27 +16,26 @@ public class UserController {
     private UserService userService;
 
 
-
-
     @PostMapping()
-    private ResponseEntity<String> addUser(@Valid @RequestBody UserDto userDto){
-
+    private ResponseEntity<String> addUser(@Valid @RequestBody UserDto userDto) {
         return userService.addUser(userDto);
     }
 
-    @GetMapping({"/{id}"}) ResponseEntity<UserDto> getUser(@PathVariable Integer id){
+    @GetMapping({"/{id}"})
+    ResponseEntity<UserDto> getUser(@PathVariable Integer id) {
         return userService.getUser(id);
     }
-    @PatchMapping ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto){
+
+    @PatchMapping
+    ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
         return userService.updateUser(userDto);
     }
 
 
-    @PostMapping("follow/{follower}/{following}")
-    public ResponseEntity<FollowDto> followUser(@PathVariable Integer follower, @PathVariable Integer following){
-        return userService.followUser(follower, following);
+    @PostMapping("follow/{following}")
+    public ResponseEntity<FollowDto> followUser(@PathVariable Integer following) {
+        return userService.followUser(following);
     }
-
 
 
 }

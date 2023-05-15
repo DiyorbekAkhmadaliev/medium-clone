@@ -134,5 +134,23 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public ResponseEntity<String> unfollowUser(Integer following) {
+        User user = securityServices.getLoggedUser();
+        User followingEntity = User.builder().id(following).build();
+
+        try {
+            followsRepository.delete(Follows.builder()
+                    .follower(user)
+                    .following(followingEntity)
+                    .build());
+            return new ResponseEntity<>("Deleted",HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            throw new UserNotFoundException("user is not found");
+        } catch (InvalidDataAccessResourceUsageException e) {
+            throw new UserNotSavedException("user is not unfollowed");
+        }
+    }
+
 
 }

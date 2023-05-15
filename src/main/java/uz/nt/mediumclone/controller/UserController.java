@@ -37,9 +37,15 @@ public class UserController {
     }
 
 
+
+
     @PostMapping("follow/{following}")
     public ResponseEntity<FollowDto> followUser(@PathVariable Integer following) {
         return userService.followUser(following);
+    }
+    @DeleteMapping("follow/{following}")
+    public ResponseEntity<String> unfollowUser(@PathVariable Integer following) {
+        return userService.unfollowUser(following);
     }
 
 

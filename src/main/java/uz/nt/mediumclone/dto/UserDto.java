@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.nt.mediumclone.model.Image;
 
 @Getter
 @Setter
@@ -31,5 +32,5 @@ public class UserDto {
     private String email;
     @Size(max = 70,message = "bio shouldn't be longer than 70 characters")
     private String bio;
-//    private Image image;
+    private Image image;
 }

@@ -16,9 +16,14 @@ public class UserController {
     private UserService userService;
 
 
-    @PostMapping()
+    @PostMapping("/sign-up")
     private ResponseEntity<String> addUser(@Valid @RequestBody UserDto userDto) {
         return userService.addUser(userDto);
+    }
+
+    @PostMapping("/sign-in")
+    private ResponseEntity<String> signIn(@RequestParam String username,@RequestParam String password){
+        return userService.signIn(username,password);
     }
 
     @GetMapping({"/{id}"})

@@ -6,6 +6,7 @@ import uz.nt.mediumclone.dto.UserDto;
 public interface UserService {
 
     ResponseEntity<String> addUser(UserDto userDto);
+    ResponseEntity<String> signIn(String username,String password);
 
     ResponseEntity<UserDto> getUser(Integer id);
 

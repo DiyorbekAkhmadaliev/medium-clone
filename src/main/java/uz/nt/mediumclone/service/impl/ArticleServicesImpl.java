@@ -37,8 +37,8 @@ public class ArticleServicesImpl implements ArticleServices {
     public ResponseEntity<ArticlesDto> addArticle(ArticlesDto articlesDto) {
         List<Tag> list = tagService.addTags(articlesDto.getTags());
         Article article = articleMapper.toEntity(articlesDto);
-        Optional<User> user = userRepository.findById(1);
-        article.setAuthor(user.get());
+        User loggedUser = securityServices.getLoggedUser();
+        article.setAuthor(loggedUser);
         article.setTags(list);
 
         Article savedArticle = articleRepository.save(article);

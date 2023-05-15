@@ -7,10 +7,15 @@ public interface UserService {
 
     ResponseEntity<String> addUser(UserDto userDto);
 
+    ResponseEntity<String> signIn(String username, String password);
+
     ResponseEntity<UserDto> getUser(Integer id);
 
     ResponseEntity<UserDto> updateUser(UserDto userDto);
 
     ResponseEntity<FollowDto> followUser(Integer following);
+
+    ResponseEntity<String> unfollowUser(Integer following);
+
 }
 

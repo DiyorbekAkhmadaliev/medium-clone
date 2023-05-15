@@ -5,6 +5,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import uz.nt.mediumclone.security.JwtService;
 import uz.nt.mediumclone.dto.FollowDto;
@@ -41,11 +43,29 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private SecurityServices securityServices;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
 
     public ResponseEntity<String> addUser(UserDto userDto) {
         try {
             var jwt = jwtService.generateToken(userRepository.save(userMapper.toEntity(userDto)));
             return new ResponseEntity<>(jwt, HttpStatus.CREATED);
+        } catch (InvalidDataAccessResourceUsageException e) {
+            throw new UserNotSavedException("database connection failed. user is not saved");
+        } catch (DataIntegrityViolationException e) {
+            throw new UserNotFoundException("username or email already exists");
+        }
+    }
+
+
+    public ResponseEntity<String> signIn(String username,String password){
+
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
+            var user = userRepository.findFirstByUsername(username).orElseThrow();
+            var jwt = jwtService.generateToken(user);
+            return new ResponseEntity<>(jwt, HttpStatus.OK);
         } catch (InvalidDataAccessResourceUsageException e) {
             throw new UserNotSavedException("database connection failed. user is not saved");
         } catch (DataIntegrityViolationException e) {
@@ -112,6 +132,24 @@ public class UserServiceImpl implements UserService {
         }
 
 
+    }
+
+    @Override
+    public ResponseEntity<String> unfollowUser(Integer following) {
+        User user = securityServices.getLoggedUser();
+        User followingEntity = User.builder().id(following).build();
+
+        try {
+            followsRepository.delete(Follows.builder()
+                    .follower(user)
+                    .following(followingEntity)
+                    .build());
+            return new ResponseEntity<>("Deleted",HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            throw new UserNotFoundException("user is not found");
+        } catch (InvalidDataAccessResourceUsageException e) {
+            throw new UserNotSavedException("user is not unfollowed");
+        }
     }
 
 

@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.mediumclone.dto.ArticlesDto;
-import uz.nt.mediumclone.dto.CommentsDto;
 import uz.nt.mediumclone.exeption.NotAllowedException;
 import uz.nt.mediumclone.service.ArticleServices;
-import uz.nt.mediumclone.service.CommentsServices;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("articles")
@@ -28,27 +28,27 @@ public class ArticleResources {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteArticleById(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteArticleById(@PathVariable Integer id) {
         return articleServices.deleteArticleById(id);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getArticleById(@PathVariable Integer id) {
+    public ResponseEntity<ArticlesDto> getArticleById(@PathVariable Integer id) {
         return articleServices.getArticleById(id);
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllArticles() {
+    public ResponseEntity<List<ArticlesDto>> getAllArticles() {
         return articleServices.getAllArticles();
     }
 
     @PostMapping("/{articleId}/like")
-    public ResponseEntity<?> addLike(@PathVariable Integer articleId) {
+    public ResponseEntity<ArticlesDto> addLike(@PathVariable Integer articleId) {
         return articleServices.addLike(articleId);
     }
 
     @DeleteMapping("/{articleId}/like")
-    public ResponseEntity<?> deleteLike(@PathVariable Integer articleId) {
+    public ResponseEntity<ArticlesDto> deleteLike(@PathVariable Integer articleId) {
         return articleServices.deleteLike(articleId);
     }
 }

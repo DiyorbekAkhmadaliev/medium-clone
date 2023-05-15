@@ -61,7 +61,7 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-//
-//    @OneToOne
-//    private Image image;
+
+    @OneToOne
+    private Image image;
 }

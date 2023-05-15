@@ -39,8 +39,8 @@ public class TagServiceImpl implements TagServices {
     }
 
     @Override
-    public ResponseEntity<List<Tag>> popularTags() {
-        return null;
+    public ResponseEntity<List<String>> popularTags() {
+        return ResponseEntity.ok().body(tagsRepository.getPopularTags().stream().map(Tag::getName).toList());
     }
 
 }

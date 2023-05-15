@@ -9,5 +9,5 @@ public interface TagServices {
 
     List<Tag> addTags(List<String> tags);
 
-    ResponseEntity<List<Tag>> popularTags();
+    ResponseEntity<List<String>> popularTags();
 }

@@ -17,4 +17,13 @@ import java.util.Set;
 public interface TagsRepository extends JpaRepository<Tag, Integer> {
     @Query(value = "WITH ins AS (INSERT INTO tag(name) VALUES (?1) ON CONFLICT (name) DO NOTHING RETURNING *) SELECT * FROM ins UNION ALL SELECT * FROM tag WHERE name = ?1", nativeQuery = true)
     Optional<Tag> saveNewTags(String tagName);
+
+    @Query(value = """
+            SELECT t.id, t.name, COUNT(*) AS usage_count
+            FROM tag AS t
+            JOIN article_tag AS at ON t.id = at.tag_id
+            GROUP BY t.id, t.name
+            ORDER BY usage_count DESC
+            LIMIT 10;""", nativeQuery = true)
+    List<Tag> getPopularTags();
 }

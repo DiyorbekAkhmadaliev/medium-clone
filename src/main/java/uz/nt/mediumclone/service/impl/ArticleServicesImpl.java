@@ -1,8 +1,12 @@
 package uz.nt.mediumclone.service.impl;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.nt.mediumclone.dto.ArticlesDto;
@@ -18,6 +22,7 @@ import uz.nt.mediumclone.service.ArticleServices;
 import uz.nt.mediumclone.service.TagServices;
 import uz.nt.mediumclone.service.mapper.ArticleMapper;
 
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -82,10 +87,26 @@ public class ArticleServicesImpl implements ArticleServices {
         return ResponseEntity.status(200).body(articleMapper.toDto(articleOptional.get()));
     }
 
+//    @Override
+//    public ResponseEntity<List<ArticlesDto>> getAllArticles() {
+//        List<Article> articleOptional = articleRepository.findAll();
+//        return ResponseEntity.status(200).body(articleOptional.stream().map(articleMapper::toDto).toList());
+//    }
+
     @Override
-    public ResponseEntity<List<ArticlesDto>> getAllArticles() {
-        List<Article> articleOptional = articleRepository.findAll();
-        return ResponseEntity.status(200).body(articleOptional.stream().map(articleMapper::toDto).toList());
+    public ResponseEntity<Page<ArticlesDto>> getAllArticles(Integer page, Integer size) {
+        size = Math.max(size, 1);
+        page = Math.max(page, 0);
+
+        Long count = articleRepository.count();
+
+        PageRequest pageRequest = PageRequest.of((count / size) <= page ? (count % size == 0) ? (int) (count / size) - 1 : (int) (count / size) : page, size);
+
+        pageRequest = pageRequest.withSort(Sort.by("publishDate").descending());
+
+        Page<ArticlesDto> articles = articleRepository.findAll(pageRequest).map(articleMapper::toDto);
+
+        return ResponseEntity.ok().body(articles);
     }
 
     @Override
@@ -101,7 +122,7 @@ public class ArticleServicesImpl implements ArticleServices {
         if (articlesDto.getBody() != null) {
             article.setBody(articlesDto.getBody());
         }
-        if (articlesDto.getTags()!=null){
+        if (articlesDto.getTags() != null) {
             List<Tag> tagList = tagService.addTags(articlesDto.getTags());
             article.setTags(tagList);
         }
@@ -169,5 +190,19 @@ public class ArticleServicesImpl implements ArticleServices {
             return ResponseEntity.ok().body(articleMapper.toDto(article));
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    @Override
+    public ResponseEntity<Page<ArticlesDto>> getArticlesOfUserFeed(Integer page, Integer size) {
+        size = Math.max(size, 1);
+//        page = Math.max(page, 0);
+
+        User loggedUser = securityServices.getLoggedUser();
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("publish_date").descending());
+
+        Page<ArticlesDto> articles = articleRepository.getArticlesOfUserFeed(loggedUser.getId(), pageRequest).map(articleMapper::toDto);
+
+        return ResponseEntity.ok().body(articles);
     }
 }

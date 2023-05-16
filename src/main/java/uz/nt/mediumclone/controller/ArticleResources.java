@@ -1,6 +1,7 @@
 package uz.nt.mediumclone.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.mediumclone.dto.ArticlesDto;
@@ -38,8 +39,13 @@ public class ArticleResources {
     }
 
     @GetMapping
-    public ResponseEntity<List<ArticlesDto>> getAllArticles() {
-        return articleServices.getAllArticles();
+    public ResponseEntity<Page<ArticlesDto>> getAllArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        return articleServices.getAllArticles(page, size);
+    }
+
+    @GetMapping("/feed")
+    public ResponseEntity<Page<ArticlesDto>> getArticlesOfUserFeed(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size){
+        return articleServices.getArticlesOfUserFeed(page, size);
     }
 
     @PostMapping("/{articleId}/like")

@@ -17,6 +17,7 @@
         <java.version>17</java.version>
         <org.projectlombok.version>1.18.22</org.projectlombok.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+        <sonar.projectKey>medium-clone-CI-CD-task</sonar.projectKey>
     </properties>
     <dependencies>
         <dependency>
